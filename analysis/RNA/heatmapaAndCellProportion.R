@@ -1,5 +1,6 @@
 suppressPackageStartupMessages({
   library(Seurat)               # NormalizeData, ScaleData
+  library(DESeq2)               # DESeq2 VST normalization
   library(dplyr)                # 데이터 처리
   library(tidyr)                # pivot_longer
   library(tibble)               # rownames_to_column
@@ -36,7 +37,7 @@ run_heatmap_and_cellProportion <- function(
   
   # 1. Load Object & Setup Metadata
   seurat_obj <- readRDS(seurat_path)
-  DefaultAssay(seurat_obj) <- "Protein"
+  DefaultAssay(seurat_obj) <- "RNA"
   
   cell_types <- unlist(cell_types)
   group_order <- unlist(group_order)
@@ -84,29 +85,38 @@ run_heatmap_and_cellProportion <- function(
   message("Cell proportion plot saved.")
 
   #----------------------------------------------#
-  # *** Data Normalization & Scaling Step ***
+  # *** DESeq2 VST Normalization Step ***
   # (Heatmap을 그리기 위해 여기서 수행)
   #----------------------------------------------#
-  message("Performing Normalization (CLR) and Scaling for Heatmap...")
-  
-  if (IsGlobal(seurat_obj, assay = "Protein", slot = "data") || 
-      length(GetAssayData(seurat_obj, assay = "Protein", layer = "data")) == 0) {
-    
-    message(" -> Normalization not found. Running NormalizeData (CLR)...")
-    seurat_obj <- NormalizeData(
-      seurat_obj,
-      assay = "Protein",
-      normalization.method = "CLR",
-      margin = 2
-    )
-  } else {
-    message(" -> Normalized data found. Skipping NormalizeData.")
-  }
-  
+  message(">>> Performing DESeq2 VST normalization for RNA data...")
+
+  # RNA count 데이터 추출
+  expression_data <- GetAssayData(seurat_obj, assay = "RNA", layer = "counts")
+
+  # --- DESeq2 variance stabilization ---
+  message("Variance stabilizing transformation...")
+  dds <- DESeqDataSetFromMatrix(
+    countData = expression_data,
+    colData = meta,
+    design = ~1
+  )
+  rm(expression_data); gc()
+
+  vsd <- varianceStabilizingTransformation(dds, blind = TRUE)
+  vst_mat <- assay(vsd)
+  rm(dds, vsd); gc()
+
+  # VST 정규화된 데이터를 Seurat 객체의 data layer에 저장
+  seurat_obj[["RNA"]]@layers$data <- vst_mat
+  message(" -> VST normalization completed.")
+
+  # Z-score scaling (Seurat ScaleData 사용)
+  message(" -> Running ScaleData for Z-score transformation...")
   seurat_obj <- ScaleData(
     seurat_obj,
-    assay = "Protein"
+    assay = "RNA"
   )
+  message(" -> Scaling completed.")
   
   #----------------------------------------------#
   # 3. Factor weight-based gene heatmap
@@ -120,7 +130,7 @@ run_heatmap_and_cellProportion <- function(
   # 이제 ScaleData가 완료되었으므로 scale.data 레이어 접근 가능
   mat <- GetAssayData(
     seurat_obj,
-    assay = "Protein",
+    assay = "RNA",
     layer = "scale.data"
   )[selected_genes, ]
   

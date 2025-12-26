@@ -8,9 +8,10 @@
     "subset_region": "tubulointer",
     "MOFA_group": "Condition",
     "seed": 2025,
+    "view_name": "RNA",
     "x_var_list": ["Region_group"],
     "cor_vars": ["T_cells"],
-    "cell_types": ["T_cells", "B_cells", "Myeloid", "Fibroblasts", "Endothelial", "Epithelial"]
+    "cell_types": ["T_cells", "B_cells", "NK_cells", "classical_monocyte", "non_classical_monocyte", "conventional_dendritic_cell", "dendritic_cell_human", "myeloid_cell", "Glomerular_cells", "Tubular_epithelial_cells", "Vascular_endothelial_cells", "Fibroblast_cells", "Other_Stromal_Vascular_cells"]
   },
   "run_list": [
     {

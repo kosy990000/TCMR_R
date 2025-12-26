@@ -13,20 +13,75 @@ suppressPackageStartupMessages({
   library(jsonlite)
 })
 
+# Load configuration
+config <- fromJSON("analysis_improved/config/config.json", simplifyVector = FALSE)
 
+
+##============================================================================##
+## 함수: figure_MOFA
+## 설명: MOFA 분석 결과를 시각화하는 함수
+##       - Factor weight 저장 및 시각화
+##       - Factor score boxplot
+##       - Factor-변수 상관관계 분석 및 scatter plot
+##       - Factor-세포타입 상관관계 heatmap
+##============================================================================##
 figure_MOFA <- function(
-    mofa_path,
-    seurat_path,
-    output_dir = "MOFA_Output",
-    n_factors = 4,
-    x_var_list = c("Region_group"),
-    cor_vars = c("T_cells")
+    mofa_path,          # MOFA 모델 객체 경로 (.rds 파일)
+    seurat_path,        # Seurat 객체 경로 (.rds 파일)
+    output_dir = "MOFA_Output",  # 결과 저장 디렉토리
+    n_factors = 4,      # 분석할 Factor 개수
+    x_var_list = c("Region_group"),  # Boxplot에서 x축으로 사용할 변수 리스트
+    cor_vars = c("T_cells"),  # 상관관계 분석할 변수 리스트
+    cell_types = NULL,  # 세포 타입 컬럼명 리스트 (Factor-celltype correlation용)
+    view_name = "RNA"   # MOFA view 이름 ("RNA" 또는 "Protein")
 ) {
   message("==== Plotting MOFA Results ====")
+
+  # -------------------------------------------------------------------------
+  # 1. 데이터 로딩 및 디렉토리 설정
+  # -------------------------------------------------------------------------
+  # MOFA 모델 객체 로드
+  mofa_obj <- readRDS(mofa_path)
+  # Seurat 객체 로드 (Factor score가 메타데이터에 포함되어 있음)
   seurat_obj <- readRDS(seurat_path)
-  figure_dir <- file.path(output_dir, "figure")
 
+  # 출력 디렉토리 생성
+  figure_dir <- file.path(output_dir, "figure")  # Figure 저장 폴더
+  factor_weight_dir <- file.path(output_dir, "factor-weight")  # Factor weight 저장 폴더
+  dir.create(figure_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(factor_weight_dir, showWarnings = FALSE, recursive = TRUE)
 
+  # -------------------------------------------------------------------------
+  # 2. Factor Weights 저장 (CSV)
+  # -------------------------------------------------------------------------
+  # MOFA 모델에서 각 Feature(유전자)의 weight를 추출
+  # weight가 클수록 해당 factor에서 중요한 유전자임
+  message("Saving factor weights...")
+  weights_df <- get_weights(mofa_obj, view = view_name, as.data.frame = TRUE)
+
+  # 각 Factor별로 weight를 절대값 기준 내림차순 정렬하여 CSV로 저장
+  for (factor_name in unique(weights_df$factor)) {
+    sub_df <- filter(weights_df, factor == factor_name) %>%
+      arrange(desc(abs(value)))  # 절대값 기준 내림차순 정렬 (중요한 유전자가 위로)
+    write.csv(sub_df,
+              file = file.path(factor_weight_dir, paste0("weights_", factor_name, ".csv")),
+              row.names = FALSE)
+  }
+
+  # -------------------------------------------------------------------------
+  # 3. Factor Weights 시각화 (Top 20 features)
+  # -------------------------------------------------------------------------
+  # 각 Factor의 상위 20개 중요 유전자를 barplot으로 시각화
+  message("Plotting factor weights...")
+  for (i in seq_len(n_factors)) {
+    p <- plot_top_weights(mofa_obj, factors = i, nfeatures = 20)
+    ggsave(file.path(figure_dir, paste0("factor_weights_Factor", i, ".pdf")), p, dpi = 300)
+  }
+
+  # -------------------------------------------------------------------------
+  # 4. 메타데이터 준비
+  # -------------------------------------------------------------------------
+  # Seurat 객체에서 메타데이터 추출 (Factor score + 세포 정보 포함)
   meta_data <- seurat_obj@meta.data
 
   meta_data$Region_group <- factor(meta_data$Region_group, levels = c(
@@ -136,61 +191,79 @@ figure_MOFA <- function(
   write.csv(cor_result_df, file.path(output_dir, "correlation_summary.csv"), row.names = FALSE)
   message("plots and correlation summary saved.")
 
+  # --------------------------------------
+  # Factor-celltype correlation heatmap
+  # 모든 Factor와 모든 cell type 간의 상관관계를 한눈에 보기 위한 heatmap
+  # --------------------------------------
+  if (!is.null(cell_types) && length(cell_types) > 0) {
+    message("Creating Factor-celltype correlation heatmap...")
+
+    # Factor 컬럼들 추출 (Factor1, Factor2, ...)
+    factor_cols <- grep("^Factor", colnames(meta_data), value = TRUE)
+
+    # cell_types 중에서 실제로 meta_data에 존재하는 컬럼만 선택
+    celltype_cols <- cell_types[cell_types %in% colnames(meta_data)]
+
+    if (length(celltype_cols) > 0) {
+      # 상관계수 행렬 계산: Factor x Cell type
+      cor_mat <- cor(meta_data[, factor_cols], meta_data[, celltype_cols],
+                     use = "pairwise.complete.obs", method = "pearson")
+
+      # 상관계수 행렬을 long format으로 변환 (ggplot용)
+      cor_df <- as.data.frame(cor_mat) %>%
+        rownames_to_column("Factor") %>%
+        pivot_longer(-Factor, names_to = "CellType", values_to = "Correlation")
+
+      # Heatmap 그리기
+      p_heatmap <- ggplot(cor_df, aes(x = CellType, y = Factor, fill = Correlation)) +
+        geom_tile(color = "grey90", linewidth = 0.5) +  # 타일 그리기
+        geom_text(aes(label = sprintf("%.2f", Correlation)), size = 3, fontface = "bold") +  # 상관계수 값 표시
+        scale_fill_gradient2(low = "#4575b4", mid = "white", high = "#d73027",  # 파란색-흰색-빨간색 gradient
+                             midpoint = 0, limit = c(-1, 1), name = "Pearson R") +
+        labs(title = "Correlation between Factors and Cell proportions",
+             x = "Cell Type", y = "Factor") +
+        theme_minimal(base_size = 13) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),
+              axis.text.y = element_text(face = "bold"),
+              plot.title = element_text(hjust = 0.5, face = "bold"))
+
+      # PDF로 저장
+      ggsave(file.path(figure_dir, "factor_celltype_correlation_heatmap.pdf"),
+             p_heatmap, width = 8, height = 5, dpi = 300)
+      message("Factor-celltype correlation heatmap saved.")
+    } else {
+      message("Warning: No valid cell type columns found in metadata.")
+    }
+  }
+
 }
 
-params_list <- list(
+# Build params_list from config
+params_list <- lapply(config$run_list, function(run) {
   list(
-    output_dir = "Deseq4000Factor4con",
-    n_factors = 4,
-    subset_region = "tubulointer",
-    MOFA_group = "Condition"
-  ),
-  list(
-    output_dir = "Deseq4000Factor6con",
-    n_factors = 6,
-    subset_region = "tubulointer",
-    MOFA_group = "Condition"
-  ),
-  list(
-    output_dir = "Deseq4000Factor8con",
-    n_factors = 8,
-    subset_region = "tubulointer",
-    MOFA_group = "Condition"
+    output_dir = file.path(config$paths$base_output_dir, run$name),
+    n_factors = run$n_factors
   )
-)
-# -------------------------------------------------------------------
-# 2) 반복 실행
-# -------------------------------------------------------------------
-for (i in seq_along(params_list)) {
+})
 
+# Run figure generation for each configuration
+for (i in seq_along(params_list)) {
   cat("\n============================\n")
-  cat("Running MOFA job", i, "\n")
+  cat("Generating figures for job", i, "/", length(params_list), "\n")
+  cat("Output:", params_list[[i]]$output_dir, "\n")
   cat("============================\n\n")
 
   p <- params_list[[i]]
-  output_dir <- file.path("result", p$output_dir)
+
   figure_MOFA(
-    seurat_path = file.path(output_dir, "seurat_obj_raw.rds"),
-    mofa_path = file.path(output_dir, "mofa_model_raw.rds"),
-    output_dir = output_dir,
+    seurat_path = file.path(p$output_dir, "seurat_obj_raw.rds"),
+    mofa_path = file.path(p$output_dir, "mofa_model_raw.rds"),
+    output_dir = p$output_dir,
     n_factors = p$n_factors,
-    x_var_list = c("Region_group"),
-    cor_vars = c("T_cells")
-  )
-}
-
-##------------------------------------------------------------
-
-
-for (params in config$factor_analysis$params_list) {
-  output_dir <- params$output_dir
-  figure_MOFA(
-    seurat_path = file.path(output_dir, "seurat_obj_raw.rds"),
-    mofa_path = file.path(output_dir, "mofa_model_raw.rds"),
-    output_dir = params$output_dir,
-    n_factors = params$n_factors,
-    x_var_list = unlist(params$x_var_list),
-    cor_vars = unlist(params$cor_vars)
+    x_var_list = unlist(config$fixed_params$x_var_list),
+    cor_vars = unlist(config$fixed_params$cor_vars),
+    cell_types = unlist(config$fixed_params$cell_types),
+    view_name = config$fixed_params$view_name
   )
 }
 

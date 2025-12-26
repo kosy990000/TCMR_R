@@ -1,0 +1,35 @@
+{
+  "visualization": {
+    "seurat_path": "raw-data/raw_ROI_data.rds",
+    "weight_base_dir": "result/CLSProNorfactor4",
+    "output_dir": "result/visualization",
+    "normalization_method": "CLR",
+    "group_var": "Region_group",
+    "group_order": [
+      "glom_CTRL_pre",
+      "glom_CTRL_post",
+      "glom_TCMR_pre",
+      "glom_TCMR_post",
+      "tubulointer_CTRL_pre",
+      "tubulointer_CTRL_post",
+      "tubulointer_TCMR_pre",
+      "tubulointer_TCMR_post"
+    ],
+    "cell_types": [
+      "T_cells",
+      "B_cells",
+      "NK_cells",
+      "classical_monocyte",
+      "non_classical_monocyte",
+      "conventional_dendritic_cell",
+      "dendritic_cell_human",
+      "myeloid_cell",
+      "Glomerular_cells",
+      "Tubular_epithelial_cells",
+      "Vascular_endothelial_cells",
+      "Fibroblast_cells",
+      "Other_Stromal_Vascular_cells"
+    ],
+    "n_factor": 1
+  }
+}

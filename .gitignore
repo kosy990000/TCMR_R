@@ -13,12 +13,15 @@ renv/local/
 
 # --- 데이터 및 결과물 (용량 및 보안 관리) ---
 # 중요한 원본 데이터나 용량이 큰 결과물은 깃에 올리지 않습니다.
+analysis_legacy/
 data/
 raw-data/
 result/
+improve_result/
 *.csv
 *.rds
 *.RData
+
 
 # --- 기타 시스템 파일 ---
 .DS_Store
