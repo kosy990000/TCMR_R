@@ -1,0 +1,29 @@
+{
+  "paths": {
+    "seurat_data": "raw-data/raw_ROI_data.rds",
+    "base_output_dir": "improve_result"
+  },
+  "fixed_params": {
+    "top_n": 4000,
+    "subset_region": "tubulointer",
+    "MOFA_group": "Condition",
+    "seed": 2025,
+    "x_var_list": ["Region_group"],
+    "cor_vars": ["T_cells"],
+    "cell_types": ["T_cells", "B_cells", "Myeloid", "Fibroblasts", "Endothelial", "Epithelial"]
+  },
+  "run_list": [
+    {
+      "name": "Deseq4000Factor4con",
+      "n_factors": 4
+    },
+    {
+      "name": "Deseq4000Factor6con",
+      "n_factors": 6
+    },
+    {
+      "name": "Deseq4000Factor8con",
+      "n_factors": 8
+    }
+  ]
+}

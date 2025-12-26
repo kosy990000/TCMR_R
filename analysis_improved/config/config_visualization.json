@@ -1,0 +1,27 @@
+{
+  "visualization": {
+    "seurat_path": "raw-data/raw_ROI_data.rds",
+    "weight_base_dir": "improve_result/Deseq4000Factor4con",
+    "output_dir": "improve_result/visualization",
+    "group_var": "Region_group",
+    "group_order": [
+      "glom_CTRL_pre",
+      "glom_CTRL_post",
+      "glom_TCMR_pre",
+      "glom_TCMR_post",
+      "tubulointer_CTRL_pre",
+      "tubulointer_CTRL_post",
+      "tubulointer_TCMR_pre",
+      "tubulointer_TCMR_post"
+    ],
+    "cell_types": [
+      "T_cells",
+      "B_cells",
+      "Myeloid",
+      "Fibroblasts",
+      "Endothelial",
+      "Epithelial"
+    ],
+    "n_factor": 1
+  }
+}
