@@ -1,0 +1,25 @@
+# --- renv 관련 (자동 생성됨) ---
+renv/library/
+renv/python/
+renv/staging/
+renv/local/
+
+# --- R 프로젝트 필수 제외 (개인 설정 및 임시 파일) ---
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+
+# --- 데이터 및 결과물 (용량 및 보안 관리) ---
+# 중요한 원본 데이터나 용량이 큰 결과물은 깃에 올리지 않습니다.
+data/
+raw-data/
+result/
+*.csv
+*.rds
+*.RData
+
+# --- 기타 시스템 파일 ---
+.DS_Store
+Thumbs.db

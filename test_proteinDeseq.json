@@ -1,0 +1,122 @@
+{
+  "h5ad2rds": {
+    "input_GeoMx": "data-raw/kidney_atlas_confirm_ROI_scm.h5ad",
+    "output_dir": "data"
+  },
+  "factor_analysis": {
+    "params_list": [
+      {
+        "seurat_path": "data/data.rds",
+        "top_n": 4000,
+        "output_dir": "data/results/DeseqProNorfactor4",
+        "n_factors": 4,
+        "subset_region": "tubulointer",
+        "MOFA_group": "Condition",
+        "x_var_list": ["Region_group"],
+        "cor_vars": ["T_cells"],
+        "group_var": "Region_group",
+        "factor_num" : 1,
+        "group_order": [
+          "glom_CTRL_pre",
+          "glom_CTRL_post",
+          "glom_TCMR_pre",
+          "glom_TCMR_post",
+          "tubulointer_CTRL_pre",
+          "tubulointer_CTRL_post",
+          "tubulointer_TCMR_pre",
+          "tubulointer_TCMR_post"
+        ],
+        "cell_types": [
+          "T_cells",
+          "B_cells",
+          "NK_cells",
+          "classical_monocyte",
+          "non_classical_monocyte",
+          "conventional_dendritic_cell",
+          "dendritic_cell_human",
+          "myeloid_cell",
+          "Glomerular_cells",
+          "Tubular_epithelial_cells",
+          "Vascular_endothelial_cells",
+          "Fibroblast_cells",
+          "Other_Stromal_Vascular_cells"
+        ]
+      },
+            {
+        "seurat_path": "data/data.rds",
+        "top_n": 4000,
+        "output_dir": "data/results/DeseqProNorfactor6",
+        "n_factors": 6,
+        "subset_region": "tubulointer",
+        "MOFA_group": "Condition",
+        "x_var_list": ["Region_group"],
+        "cor_vars": ["T_cells"],
+        "group_var": "Region_group",
+        "factor_num" : 1,
+        "group_order": [
+          "glom_CTRL_pre",
+          "glom_CTRL_post",
+          "glom_TCMR_pre",
+          "glom_TCMR_post",
+          "tubulointer_CTRL_pre",
+          "tubulointer_CTRL_post",
+          "tubulointer_TCMR_pre",
+          "tubulointer_TCMR_post"
+        ],
+        "cell_types": [
+          "T_cells",
+          "B_cells",
+          "NK_cells",
+          "classical_monocyte",
+          "non_classical_monocyte",
+          "conventional_dendritic_cell",
+          "dendritic_cell_human",
+          "myeloid_cell",
+          "Glomerular_cells",
+          "Tubular_epithelial_cells",
+          "Vascular_endothelial_cells",
+          "Fibroblast_cells",
+          "Other_Stromal_Vascular_cells"
+        ]
+      },
+            {
+        "seurat_path": "data/data.rds",
+        "top_n": 4000,
+        "output_dir": "data/results/DeseqProNorfactor8",
+        "n_factors": 8,
+        "subset_region": "tubulointer",
+        "MOFA_group": "Condition",
+        "x_var_list": ["Region_group"],
+        "cor_vars": ["T_cells"],
+        "group_var": "Region_group",
+        "factor_num" : 1,
+        "group_order": [
+          "glom_CTRL_pre",
+          "glom_CTRL_post",
+          "glom_TCMR_pre",
+          "glom_TCMR_post",
+          "tubulointer_CTRL_pre",
+          "tubulointer_CTRL_post",
+          "tubulointer_TCMR_pre",
+          "tubulointer_TCMR_post"
+        ],
+        "cell_types": [
+          "T_cells",
+          "B_cells",
+          "NK_cells",
+          "classical_monocyte",
+          "non_classical_monocyte",
+          "conventional_dendritic_cell",
+          "dendritic_cell_human",
+          "myeloid_cell",
+          "Glomerular_cells",
+          "Tubular_epithelial_cells",
+          "Vascular_endothelial_cells",
+          "Fibroblast_cells",
+          "Other_Stromal_Vascular_cells"
+        ]
+      }
+    ]
+  }
+}
+
