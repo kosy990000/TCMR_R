@@ -9,7 +9,7 @@ library(Matrix)
 library(ggplot2)
 
 # Load configuration
-config <- fromJSON("analysis_improved/config/config.json", simplifyVector = FALSE)
+config <- fromJSON("analysis/config/config_no_con_new.json", simplifyVector = FALSE)
 
 
 run_MOFA <- function(

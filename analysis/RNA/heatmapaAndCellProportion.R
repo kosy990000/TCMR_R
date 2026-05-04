@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
   library(grid)                 # grid
 })
 
-config <- fromJSON("analysis_improved/config/config_visualization.json", simplifyVector = FALSE)
+config <- fromJSON("analysis/config/config_visualization_no_con_new.json", simplifyVector = FALSE)
 
 run_heatmap_and_cellProportion <- function(
     seurat_path,
@@ -81,7 +81,7 @@ run_heatmap_and_cellProportion <- function(
       legend.text = element_text(face = "bold")
     )
   
-  ggsave(file.path(figure_dir, "cell_prop.pdf"), p_cell, dpi = 300, width = 12, height = 8)
+  ggsave(file.path(figure_dir, "cell_prop_integ.pdf"), p_cell, dpi = 300, width = 12, height = 8)
   message("Cell proportion plot saved.")
 
   #----------------------------------------------#
@@ -107,7 +107,7 @@ run_heatmap_and_cellProportion <- function(
   rm(dds, vsd); gc()
 
   # VST 정규화된 데이터를 Seurat 객체의 data layer에 저장
-  seurat_obj[["RNA"]]@layers$data <- vst_mat
+  seurat_obj <- SetAssayData(seurat_obj, assay = "RNA", layer = "data", new.data = vst_mat)
   message(" -> VST normalization completed.")
 
   # Z-score scaling (Seurat ScaleData 사용)
@@ -183,3 +183,4 @@ run_heatmap_and_cellProportion(
   cell_types = unlist(vis_config$cell_types),
   n_factor = vis_config$n_factor
 )
+

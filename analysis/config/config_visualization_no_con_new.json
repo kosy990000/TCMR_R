@@ -1,8 +1,8 @@
 {
   "visualization": {
-    "seurat_path": "raw-data/raw_ROI_data.rds",
-    "weight_base_dir": "improve_result/Deseq4000Factor4no_con",
-    "output_dir": "improve_result/visualization",
+    "seurat_path": "raw-data/raw_ROI_data_no_con_new.rds",
+    "weight_base_dir": "improve_result/Deseq4000Factor4no_con_new",
+    "output_dir": "improve_result/visualization_no_con_new",
     "normalization_method": "DESeq",
     "group_var": "Region_group",
     "group_order": [
@@ -29,6 +29,6 @@
       "Fibroblast_cells",
       "Other_Stromal_Vascular_cells"
     ],
-    "n_factor": 1
+    "n_factor": 2
   }
 }

@@ -1,7 +1,7 @@
 {
   "visualization": {
-    "seurat_path": "raw-data/raw_ROI_data.rds",
-    "weight_base_dir": "improve_result/Deseq4000Factor4no_con",
+    "seurat_path": "raw-data/raw_ROI_data_no_human.rds",
+    "weight_base_dir": "improve_result/Deseq4000Factor6_no_human",
     "output_dir": "improve_result/visualization",
     "normalization_method": "DESeq",
     "group_var": "Region_group",
@@ -21,7 +21,7 @@
       "NK_cells",
       "classical_monocyte",
       "non_classical_monocyte",
-      "dendritic_cell_human",
+      "conventional_dendritic_cell",
       "myeloid_cell",
       "Glomerular_cells",
       "Tubular_epithelial_cells",
@@ -29,6 +29,6 @@
       "Fibroblast_cells",
       "Other_Stromal_Vascular_cells"
     ],
-    "n_factor": 1
+    "n_factor": 2
   }
 }

@@ -1,0 +1,31 @@
+{
+  "paths": {
+    "seurat_data": "raw-data/raw_ROI_data_new.rds",
+    "base_output_dir": "result"
+  },
+  "fixed_params": {
+    "top_n": 4000,
+    "subset_region": "tubulointer",
+    "MOFA_group": "Condition",
+    "seed": 2025,
+    "normalization_method": "CLR",
+    "view_name": "Protein",
+    "x_var_list": ["Region_group"],
+    "cor_vars": ["T_cells"],
+    "cell_types": ["T_cells", "B_cells", "NK_cells", "classical_monocyte", "non_classical_monocyte", "conventional_dendritic_cell", "dendritic_cell_human", "myeloid_cell", "Glomerular_cells", "Tubular_epithelial_cells", "Vascular_endothelial_cells", "Fibroblast_cells", "Other_Stromal_Vascular_cells"]
+  },
+  "run_list": [
+    {
+      "name": "CLSProNorfactor4_new",
+      "n_factors": 4
+    },
+    {
+      "name": "CLSProNorfactor6_new",
+      "n_factors": 6
+    },
+    {
+      "name": "CLSProNorfactor8_new",
+      "n_factors": 8
+    }
+  ]
+}

@@ -7,7 +7,7 @@ library(Matrix) # 희소 행렬 변환용
 # 1. Load H5ad 
 root_dir <- getwd()
 data_dir <- file.path(root_dir, "raw-data")
-data_name <- "ROI_data_raw.h5ad"
+data_name <- "cell_proportion_ROI_no_human.h5ad"
 data_path <- file.path(data_dir, data_name)
 
 sce <- readH5AD(data_path)
@@ -93,7 +93,7 @@ seurat_obj$Group <- paste(seurat_obj$Condition, seurat_obj$Timepoint, sep = "_")
 seurat_obj$Region_group <- paste(seurat_obj$Region, seurat_obj$Group, sep = "_")
 
 # 5. 저장
-saveRDS(seurat_obj, file.path(data_dir, "raw_ROI_data.rds"))
+saveRDS(seurat_obj, file.path(data_dir, "raw_ROI_data_no_human.rds"))
 
 # 6. 최종 검증 (Seurat V5 호환성 고려)
 print("=== 검증 시작 ===")

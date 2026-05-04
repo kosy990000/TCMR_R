@@ -1,0 +1,30 @@
+{
+  "paths": {
+    "seurat_data": "raw-data/raw_ROI_data_integ_new.rds",
+    "base_output_dir": "improve_result"
+  },
+  "fixed_params": {
+    "top_n": 4000,
+    "subset_region": "tubulointer",
+    "MOFA_group": "Condition",
+    "seed": 2025,
+    "view_name": "RNA",
+    "x_var_list": ["Region_group"],
+    "cor_vars": ["T_cells"],
+    "cell_types": ["T_cells", "B_cells", "NK_cells", "classical_monocyte", "non_classical_monocyte", "dendritic_cell", "myeloid_cell", "Glomerular_cells", "Tubular_epithelial_cells", "Vascular_endothelial_cells", "Fibroblast_cells", "Other_Stromal_Vascular_cells"]
+  },
+  "run_list": [
+    {
+      "name": "Deseq4000Factor4inte",
+      "n_factors": 4
+    },
+    {
+      "name": "Deseq4000Factor6inte",
+      "n_factors": 6
+    },
+    {
+      "name": "Deseq4000Factor8inte",
+      "n_factors": 8
+    }
+  ]
+}

@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
   library(grid)                 # grid
 })
 
-config <- fromJSON("analysis_improved/config/config_visualization_protein.json", simplifyVector = FALSE)
+config <- fromJSON("analysis/config/config_visualization_protein_new.json", simplifyVector = FALSE)
 
 run_heatmap_and_cellProportion <- function(
     seurat_path,

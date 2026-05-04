@@ -1,9 +1,9 @@
 {
   "visualization": {
-    "seurat_path": "raw-data/raw_ROI_data.rds",
-    "weight_base_dir": "improve_result/Deseq4000Factor4no_con",
-    "output_dir": "improve_result/visualization",
-    "normalization_method": "DESeq",
+    "seurat_path": "raw-data/raw_ROI_data_new.rds",
+    "weight_base_dir": "result/CLSProNorfactor4_new",
+    "output_dir": "result/visualization_protein_new",
+    "normalization_method": "CLR",
     "group_var": "Region_group",
     "group_order": [
       "glom_CTRL_pre",
@@ -21,6 +21,7 @@
       "NK_cells",
       "classical_monocyte",
       "non_classical_monocyte",
+      "conventional_dendritic_cell",
       "dendritic_cell_human",
       "myeloid_cell",
       "Glomerular_cells",

@@ -14,7 +14,7 @@ suppressPackageStartupMessages({
 })
 
 # Load configuration
-config <- fromJSON("analysis_improved/config/config.json", simplifyVector = FALSE)
+config <- fromJSON("analysis/config/config_protein_new.json", simplifyVector = FALSE)
 
 
 ##============================================================================##
@@ -227,9 +227,9 @@ figure_MOFA <- function(
               axis.text.y = element_text(face = "bold"),
               plot.title = element_text(hjust = 0.5, face = "bold"))
 
-      # PDF로 저장
+      # PDF로 저장 -height 3으로 변경
       ggsave(file.path(figure_dir, "factor_celltype_correlation_heatmap.pdf"),
-             p_heatmap, width = 8, height = 5, dpi = 300)
+             p_heatmap, width = 8, height = 3, dpi = 300)
       message("Factor-celltype correlation heatmap saved.")
     } else {
       message("Warning: No valid cell type columns found in metadata.")
